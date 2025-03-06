@@ -15,7 +15,7 @@ st.sidebar.title("Bike Sharing Dashboard")
 option = st.sidebar.selectbox("Pilih Visualisasi", ["Tren Penyewaan Bulanan", "Pengaruh Cuaca", "Hari Kerja vs Akhir Pekan"])
 
 # 1️⃣ Tren Penyewaan Sepeda per Bulan
-if option == "Tren Penyewaan Sepeda":
+if option == "Tren Penyewaan Bulanan":
     st.subheader("Tren Penyewaan Sepeda per Bulan")
     
     monthly_rentals = df.groupby("mnth", observed=True)["cnt"].sum().reset_index()

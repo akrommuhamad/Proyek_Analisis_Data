@@ -3,60 +3,75 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Load dataset
+# Load Data
 @st.cache_data
 def load_data():
-    return pd.read_csv("main_data.csv", parse_dates=["dteday"])
+    return pd.read_csv("main_data.csv")
 
 df = load_data()
 
-# Sidebar
+# Sidebar: Pilihan Analisis
 st.sidebar.title("Bike Sharing Dashboard")
-option = st.sidebar.selectbox("Pilih Visualisasi", ["Tren Penyewaan Bulanan", "Pengaruh Cuaca", "Hari Kerja vs Akhir Pekan"])
+analysis_option = st.sidebar.radio(
+    "Pilih Analisis:",
+    ("Tren Penyewaan Sepeda", "Pengaruh Cuaca", "Penyewaan: Hari Kerja vs Akhir Pekan")
+)
 
-# 1️⃣ Tren Penyewaan Sepeda per Bulan
-if option == "Tren Penyewaan Bulanan":
-    st.subheader("Tren Penyewaan Sepeda per Bulan")
+# **1️⃣ Tren Penyewaan Sepeda**
+if analysis_option == "Tren Penyewaan Sepeda":
+    st.title("📈 Tren Penyewaan Sepeda")
     
-    monthly_rentals = df.groupby("mnth", observed=True)["cnt"].sum().reset_index()
-
-    plt.figure(figsize=(10, 5))
-    sns.lineplot(data=monthly_rentals, x="mnth", y="cnt", marker="o", color="b")
-    plt.xticks(ticks=range(1, 13), labels=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+    monthly_rentals = df.groupby("mnth")["cnt"].sum().reset_index()
+    
+    plt.figure(figsize=(10,5))
+    sns.lineplot(x=monthly_rentals["mnth"], y=monthly_rentals["cnt"], marker="o", color="b")
     plt.xlabel("Bulan")
-    plt.ylabel("Total Penyewaan Sepeda")
-    plt.grid()
-
+    plt.ylabel("Jumlah Penyewaan")
+    plt.title("Tren Penyewaan Sepeda per Bulan")
+    plt.xticks(range(1,13), ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'])
     st.pyplot(plt)
 
-# 2️⃣ Pengaruh Cuaca terhadap Penyewaan
-elif option == "Pengaruh Cuaca":
-    st.subheader("Pengaruh Cuaca terhadap Penyewaan Sepeda")
+    st.write("📊 **Insight:** Penyewaan sepeda meningkat di musim panas dan menurun saat musim dingin.")
 
-    weather_rentals = df.groupby("weathersit", observed=True)["cnt"].mean().reset_index()
-    weather_labels = {1: "Cerah", 2: "Mendung", 3: "Hujan/Salju"}
-    weather_rentals["weathersit"] = weather_rentals["weathersit"].map(weather_labels)
+# **2️⃣ Pengaruh Cuaca terhadap Penyewaan**
+elif analysis_option == "Pengaruh Cuaca":
+    st.title("☀️ Pengaruh Cuaca terhadap Penyewaan Sepeda")
 
-    plt.figure(figsize=(8, 5))
-    sns.barplot(x="weathersit", y="cnt", data=weather_rentals, palette="Blues_r")
-    plt.xlabel("Kondisi Cuaca")
-    plt.ylabel("Rata-rata Penyewaan Sepeda")
-
+    weather_rentals = df.groupby("weathersit")["cnt"].mean().reset_index()
+    
+    plt.figure(figsize=(8,5))
+    sns.barplot(x=weather_rentals["weathersit"], y=weather_rentals["cnt"], palette="coolwarm")
+    plt.xlabel("Kondisi Cuaca (1=Baik, 3=Buruk)")
+    plt.ylabel("Rata-rata Penyewaan")
+    plt.title("Dampak Cuaca terhadap Penyewaan Sepeda")
     st.pyplot(plt)
 
-# 3️⃣ Penyewaan pada Hari Kerja vs Akhir Pekan
-elif option == "Hari Kerja vs Akhir Pekan":
-    st.subheader("Perbandingan Penyewaan Sepeda: Hari Kerja vs Akhir Pekan")
+    st.write("📊 **Insight:** Penyewaan sepeda menurun signifikan saat cuaca buruk.")
 
-    workday_rentals = df.groupby("workingday", observed=True)["cnt"].mean().reset_index()
-    workday_rentals["workingday"] = workday_rentals["workingday"].map({0: "Akhir Pekan", 1: "Hari Kerja"})
+# **3️⃣ Perbedaan Penyewaan di Hari Kerja vs Akhir Pekan**
+elif analysis_option == "Penyewaan: Hari Kerja vs Akhir Pekan":
+    st.title("🏢 Hari Kerja vs Akhir Pekan")
+    
+    workday_rentals = df.groupby("workingday")["cnt"].mean().reset_index()
 
-    plt.figure(figsize=(6, 5))
-    sns.barplot(x="workingday", y="cnt", data=workday_rentals, palette="coolwarm", order=["Hari Kerja", "Akhir Pekan"])
-    plt.xlabel("Kategori Hari")
-    plt.ylabel("Rata-rata Penyewaan Sepeda")
-
+    plt.figure(figsize=(8,5))
+    sns.barplot(x=workday_rentals["workingday"], y=workday_rentals["cnt"], palette="coolwarm")
+    plt.xlabel("Hari Kerja (0=Akhir Pekan, 1=Hari Kerja)")
+    plt.ylabel("Rata-rata Penyewaan")
+    plt.title("Perbedaan Penyewaan Sepeda antara Hari Kerja dan Akhir Pekan")
     st.pyplot(plt)
 
-st.sidebar.info("Gunakan sidebar untuk memilih visualisasi yang ingin ditampilkan.")
+    st.write("📊 **Insight:** Penyewaan hampir sama antara hari kerja dan akhir pekan, menunjukkan penggunaan untuk transportasi dan rekreasi.")
 
+    st.title("🎉 Dampak Hari Libur terhadap Penyewaan Sepeda")
+
+    holiday_rentals = df.groupby("holiday")["cnt"].mean().reset_index()
+
+    plt.figure(figsize=(8,5))
+    sns.barplot(x=holiday_rentals["holiday"], y=holiday_rentals["cnt"], palette="coolwarm")
+    plt.xlabel("Hari Libur (0=Bukan Libur, 1=Libur)")
+    plt.ylabel("Rata-rata Penyewaan")
+    plt.title("Dampak Hari Libur terhadap Penyewaan Sepeda")
+    st.pyplot(plt)
+
+    st.write("📊 **Insight:** Penyewaan sedikit lebih rendah pada hari libur, kemungkinan karena berkurangnya perjalanan rutin ke kantor/sekolah.")

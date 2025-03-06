@@ -18,7 +18,7 @@ analysis_option = st.sidebar.radio(
 )
 
 # 1️⃣ Tren Penyewaan Sepeda per Bulan
-if option == "Tren Penyewaan Bulanan":
+if option == "Tren Penyewaan Sepeda":
     st.subheader("Tren Penyewaan Sepeda per Bulan")
     
     monthly_rentals = df.groupby("mnth", observed=True)["cnt"].sum().reset_index()
@@ -48,7 +48,7 @@ elif option == "Pengaruh Cuaca":
     st.pyplot(plt)
 
 # 3️⃣ Penyewaan pada Hari Kerja vs Akhir Pekan
-elif option == "Hari Kerja vs Akhir Pekan":
+elif option == "Penyewaan: Hari Kerja vs Akhir Pekan":
     st.subheader("Perbandingan Penyewaan Sepeda: Hari Kerja vs Akhir Pekan")
 
     workday_rentals = df.groupby("workingday", observed=True)["cnt"].mean().reset_index()

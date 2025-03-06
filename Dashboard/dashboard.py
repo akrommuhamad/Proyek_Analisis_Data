@@ -10,9 +10,12 @@ def load_data():
 
 df = load_data()
 
-# Sidebar
+# Sidebar: Pilihan Analisis
 st.sidebar.title("Bike Sharing Dashboard")
-option = st.sidebar.selectbox("Pilih Visualisasi", ["Tren Penyewaan Bulanan", "Pengaruh Cuaca", "Hari Kerja vs Akhir Pekan"])
+analysis_option = st.sidebar.radio(
+    "Pilih Analisis:",
+    ("Tren Penyewaan Sepeda", "Pengaruh Cuaca", "Penyewaan: Hari Kerja vs Akhir Pekan")
+)
 
 # 1️⃣ Tren Penyewaan Sepeda per Bulan
 if option == "Tren Penyewaan Bulanan":
@@ -58,5 +61,5 @@ elif option == "Hari Kerja vs Akhir Pekan":
 
     st.pyplot(plt)
 
-st.sidebar.info("Gunakan sidebar untuk memilih visualisasi yang ingin ditampilkan.")
+
 

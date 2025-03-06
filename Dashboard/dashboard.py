@@ -45,7 +45,7 @@ elif option == "Pengaruh Cuaca":
     st.pyplot(plt)
 
 # 3️⃣ Penyewaan pada Hari Kerja vs Akhir Pekan
-elif option == "Penyewaan: Hari Kerja vs Akhir Pekan":
+elif option == "Hari Kerja vs Akhir Pekan":
     st.subheader("Perbandingan Penyewaan Sepeda: Hari Kerja vs Akhir Pekan")
 
     workday_rentals = df.groupby("workingday", observed=True)["cnt"].mean().reset_index()
